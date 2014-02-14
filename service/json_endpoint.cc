@@ -29,6 +29,7 @@ void
 JsonConnectionHandler::
 handleHttpHeader(const HttpHeader & header)
 {
+/*
     if (!header.contentType.empty()
         && header.contentType.find("json") == string::npos
         && header.contentType.find("text") == string::npos)
@@ -36,6 +37,7 @@ handleHttpHeader(const HttpHeader & header)
                         header.contentType.c_str());
     if (header.verb != "POST")
         throw Exception("invalid verb");
+*/
 }
 
 void
@@ -50,22 +52,24 @@ handleHttpPayload(const HttpHeader & header,
     
     while (end > start && end[-1] == '\n') --end;
     
+    if(!payload.empty()){
     try {
         Json::Reader reader;
         if (!reader.parse(start, end, request, false)) {
             //cerr << "JSON parsing error" << endl;
-            doError("parsing JSON payload: "
-                    + reader.getFormattedErrorMessages());
-            return;
+            //doError("parsing JSON payload: "
+            //        + reader.getFormattedErrorMessages());
+            //return;
         }
     } catch (const std::exception & exc) {
-        doError("parsing JSON request: " + string(exc.what()));
-        return;
+        //doError("parsing JSON request: " + string(exc.what()));
+        //return;
     }
-
+    }
     addActivity("finishedJsonParsing");
 
     handleJson(header, request, string(start, end));
+
 }
 
 void
